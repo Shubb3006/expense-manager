@@ -66,7 +66,7 @@ const page = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-8 bg-gray-100 rounded-xl shadow-lg font-sans">
+    <div className="max-w-4xl mx-auto sm:mt-10 mt-6 p-8 bg-gray-100 rounded-xl shadow-lg font-sans">
       
 
       <h1 className="text-3xl font-bold text-center text-white bg-gradient-to-r from-red-400 to-yellow-400 py-3 rounded-md uppercase tracking-wide mb-6">

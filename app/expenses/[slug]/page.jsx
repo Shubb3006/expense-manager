@@ -66,7 +66,7 @@ const page = () => {
     monthlyexpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
+    <div className="max-w-4xl mx-auto px-4 sm:pt-8">
       {loading ? (
         <div className="flex justify-center items-center h-[50vh]">
           <div className="text-lg text-gray-600 font-medium animate-pulse bg-white px-6 py-4 rounded-lg shadow">
@@ -74,7 +74,7 @@ const page = () => {
           </div>
         </div>
       ) : (
-        <div key={month} className="mb-8 bg-gray-100 pb-5 pt-5 rounded-lg shadow">
+        <div key={month} className="sm:mb-8 bg-gray-100 pb-5 pt-5 rounded-lg shadow">
           <h2 className="text-3xl font-extrabold text-center text-black-700 mb-6">
             {monthname}
           </h2>
@@ -138,7 +138,7 @@ const page = () => {
             })}
           </ul>
           <div className="mt-5 text-center">
-            <div className="inline-block bg-green-100 text-green-800 font-semibold text-lg px-6 py-3 rounded-xl shadow-md">
+            <div className="inline-block bg-green-100 text-green-800 font-semibold sm:text-lg text-sm px-6 py-3 rounded-xl shadow-md">
               Total Expenses for {monthname}: ₹{totalAmount}
             </div>
           </div>

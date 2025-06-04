@@ -1,16 +1,27 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/Authcontext";
 import { Menu, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const router = useRouter();
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    console.log(user);
+  }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error signing out:", error.message);
+    } else {
+      // Optional: Redirect to login or homepage
+      router.push("/login");
+    }
   };
 
   return (
@@ -19,11 +30,12 @@ const Navbar = () => {
         {/* Logo and Toggle Button (always at top for mobile) */}
         <div className="flex justify-between items-center w-full md:w-auto">
           <h1 className="text-xl font-bold">Expense Tracker</h1>
-          <button
-            className="md:hidden"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
+            {menuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
 
@@ -33,7 +45,9 @@ const Navbar = () => {
             menuOpen ? "flex" : "hidden"
           } flex-row justify-center gap-2 md:flex md:flex-row md:items-center w-full md:w-auto mt-4 md:mt-0 space-y-3 md:space-y-0 md:space-x-6`}
         >
-          <Link href="/" className="hover:text-yellow-400">Home</Link>
+          <Link href="/" className="hover:text-yellow-400">
+            Home
+          </Link>
           <Link
             href={user ? "/expenses" : "/login"}
             className="hover:text-yellow-400"
@@ -51,7 +65,7 @@ const Navbar = () => {
               </Link>
               <a
                 onClick={handleLogout}
-                className="hover:text-red-400"
+                className="hover:text-red-400 hover:cursor-pointer"
               >
                 Logout
               </a>

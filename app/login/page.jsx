@@ -58,7 +58,7 @@ const Page = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8 space-y-6">
+      <div className="w-full max-w-md bg-white shadow-md   rounded-lg p-8 space-y-6">
         <h1 className="text-2xl font-bold text-center text-gray-800">
           {isLogin ? "Login to Your Account" : "Create a New Account"}
         </h1>

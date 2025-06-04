@@ -50,7 +50,7 @@ const page = () => {
   const groupedExpenses = groupByMonth(expenses);
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-5 bg-gray-100 rounded-xl shadow-lg font-sans">
+    <div className="max-w-4xl mx-auto mt-5 md:mt-10 p-5 bg-gray-100 rounded-xl shadow-lg font-sans">
       {loading ? (
         <div className="flex justify-center items-center h-[70vh]">
           <div className="bg-white text-gray-600 text-lg px-6 py-4 rounded-lg shadow-md animate-pulse">
