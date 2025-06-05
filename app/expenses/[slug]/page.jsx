@@ -8,7 +8,7 @@ import DeletingExpense from "@/components/DeletingExpense";
 const page = () => {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [actionloading, setActionLoading] = useState(false);
+  // const [actionloading, setActionLoading] = useState(false);
   const [isEditingnote, setIsEditingnote] = useState(null);
   const [isDeleting, setIsDeleting] = useState(null);
 
@@ -44,22 +44,6 @@ const page = () => {
   useEffect(() => {
     fetchExpenses().then(() => setLoading(false));
   }, []);
-
-  async function handleDelete(id) {
-    console.log(id);
-    setActionLoading(true);
-    const { data, error } = await supabase
-      .from("expenses")
-      .delete()
-      .eq("id", id);
-    if (error) console.log(error.message);
-    else {
-      console.log("Deleted");
-      await fetchExpenses();
-    }
-    setActionLoading(false);
-    console.log(expenses);
-  }
 
   const totalAmount = expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
@@ -115,25 +99,16 @@ const page = () => {
                     <div className="flex-shrink-0 flex gap-3 items-center">
                       <button
                         onClick={() => setIsEditingnote(expense)}
-                        disabled={actionloading}
-                        className={`px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer
-                        ${
-                          actionloading
-                            ? "bg-gray-200 text-gray-500 border-gray-200 cursor-not-allowed"
-                            : "bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200"
-                        }`}
+                        
+                        className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200"
+
                       >
                         Edit
                       </button>
                       <button
-                        disabled={actionloading}
+                        
                         onClick={() => setIsDeleting(expense.id)}
-                        className={`px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer
-                        ${
-                          actionloading
-                            ? "bg-gray-200 text-gray-500 border-gray-200 cursor-not-allowed"
-                            : "bg-red-100 text-red-700 border-red-300 hover:bg-red-200"
-                        }`}
+                        className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-red-100 text-red-700 border-red-300 hover:bg-red-200"
                       >
                         Delete
                       </button>

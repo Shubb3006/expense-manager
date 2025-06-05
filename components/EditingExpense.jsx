@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { X } from "lucide-react"; // Optional: for a close icon
 
@@ -22,6 +22,15 @@ const EditingExpense = ({ expense, setIsEditingNote, fetchExpenses }) => {
     setLoading(false);
     setIsEditingNote(null);
   }
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Escape") setIsEditingNote(null);
+    };
+
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [setIsEditingNote]);
 
   return (
     <div className="fixed inset-0 z-50 backdrop-blur-sm flex items-center justify-center">

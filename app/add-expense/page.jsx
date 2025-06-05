@@ -23,13 +23,17 @@ const page = () => {
       alert("Title cannot be blank");
       return;
     }
+    if (amount <= 0) {
+      alert("Fill the right amount");
+      return;
+    }
     setLoading(true);
 
     const createdAt = date ? new Date(date) : new Date();
     const { data, error } = await supabase.from("expenses").insert({
-      title,
+      title: title.trim(),
       amount: Number(amount),
-      note,
+      note: note.trim(),
       user_id: user.id,
       created_at: createdAt.toISOString(),
     });
@@ -103,7 +107,7 @@ const page = () => {
           disabled={loading}
           className="w-full bg-green-600 text-white font-semibold py-2 rounded-md hover:bg-green-700 transition hover:cursor-pointer disabled:bg-gray-500 disabled:hover:cursor-no-drop"
         >
-          Submit
+          {loading ? "Saving" : "Submit"}
         </button>
       </form>
     </div>

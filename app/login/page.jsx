@@ -12,6 +12,7 @@ const Page = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [message, setMessage] = useState(null);
   const [err, setErr] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -20,6 +21,7 @@ const Page = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true);
 
     if (isLogin) {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -36,24 +38,83 @@ const Page = () => {
         router.push("/");
       }
     } else {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+      // const { data: signedUpData, error: signUpError } = await supabase
+      //   .from("profiles")
+      //   .select("*")
+      //   .eq("email", email);
 
-      if (error) {
+      // if (signedUpData) {
+      //   console.log(email);
+      //   console.log(signedUpData);
+      //   setLoading(false);
+      //   setErr(true);
+      //   setMessage("User Already Exists");
+
+      //   return;
+      // }
+
+      const { data: signedupData, error: signedupError } =
+        await supabase.auth.signUp({
+          email,
+          password,
+        });
+
+      if (!signedupData.user) {
         setErr(true);
-        setMessage(error.message);
-      } else {
-        setErr(false);
-        setMessage("Account created successfully! confirmation email sent");
-        if (data.user) {
-          await supabase
-            .from("profiles")
-            .insert([{ id: data.user.id, display_name: name }]);
+        setMessage("User already registered. Please Confirm Your email.");
+        setLoading(false);
+        return;
+      }
+      // if (data.user && !error) {
+      //   setErr(true);
+      //   setMessage("User already registered. Please log in.");
+      //   setLoading(false);
+      //   return;
+      // }
+
+      if (!signedupError) {
+        const { data, error } = await supabase
+          .from("profiles")
+          .insert([
+            {
+              id: signedupData.user.id,
+              display_name: name,
+              email: signedupData.user.email,
+            },
+          ]);
+
+        if (error) {
+          setErr(true);
+          setMessage("User already registered. Please log in.");
+          setLoading(false);
+          return;
+        } else {
+          setEmail("");
+          setName("");
+          setPassword("");
         }
       }
+
+      // if (error) {
+      //   setErr(true);
+      //   setMessage(error.message);
+      // } else {
+      //   setErr(false);
+      //   setMessage("Account created successfully! confirmation email sent");
+      //   if (data.user) {
+      //     await supabase
+      //       .from("profiles")
+      //       .insert([
+      //         { id: data.user.id, display_name: name, email: data.user.email },
+      //       ]);
+      //   }
+      //   setEmail("");
+      //   setName("");
+      //   setPassword("");
+      // }
     }
+
+    setLoading(false);
   }
 
   return (
@@ -107,9 +168,16 @@ const Page = () => {
 
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700"
+            disabled={loading}
+            className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:hover:cursor-pointer"
           >
-            {isLogin ? "Login" : "Sign Up"}
+            {isLogin
+              ? loading
+                ? "Logging...."
+                : "Login"
+              : loading
+              ? "Signing Up...."
+              : "Sign Up"}
           </button>
         </form>
 

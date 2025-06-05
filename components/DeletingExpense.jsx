@@ -1,6 +1,6 @@
 "use client";
 import { supabase } from "@/lib/supabase";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 
 const DeletingExpense = ({ id, setIsDeleting, fetchExpenses }) => {
   const [loading, setLoading] = useState(false);
@@ -16,6 +16,18 @@ const DeletingExpense = ({ id, setIsDeleting, fetchExpenses }) => {
     setLoading(false);
     setIsDeleting(null);
   }
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Escape") setIsDeleting(false);
+      if (e.key === "Enter") {
+        handleDelete(id); // if `id` and `handleDelete` are accessible
+      }
+    };
+
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [setIsDeleting]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
@@ -38,7 +50,7 @@ const DeletingExpense = ({ id, setIsDeleting, fetchExpenses }) => {
           </button>
           <button
             onClick={() => setIsDeleting(false)}
-            className="px-5 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+            className="px-5 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 transition hover:cursor-pointer"
           >
             Cancel
           </button>
