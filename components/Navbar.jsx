@@ -4,9 +4,10 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/Authcontext";
 import { Menu, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const pathName = usePathname();
   const router = useRouter();
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -45,22 +46,22 @@ const Navbar = () => {
             menuOpen ? "flex" : "hidden"
           } flex-row justify-center gap-2 md:flex md:flex-row md:items-center w-full md:w-auto mt-4 md:mt-0 space-y-3 md:space-y-0 md:space-x-6`}
         >
-          <Link href="/" className="hover:text-yellow-400">
+          <Link href="/" className={ pathName==="/" ? `text-yellow-400` : `hover:text-yellow-400`}>
             Home
           </Link>
           <Link
             href={user ? "/expenses" : "/login"}
-            className="hover:text-yellow-400"
+            className={ pathName==="/expenses" || pathName.startsWith("/expenses") ? `text-yellow-400` : `hover:text-yellow-400`}
           >
             Expenses
           </Link>
           {!user ? (
-            <Link href="/login" className="hover:text-yellow-400">
+            <Link href="/login" className={ pathName==="/login" ? `text-yellow-400` : `hover:text-yellow-400`}>
               Login
             </Link>
           ) : (
             <>
-              <Link href="/add-expense" className="hover:text-yellow-400">
+              <Link href="/add-expense" className={ pathName==="/add-expense"? `text-yellow-400` : `hover:text-yellow-400`}>
                 AddExpense
               </Link>
               <a

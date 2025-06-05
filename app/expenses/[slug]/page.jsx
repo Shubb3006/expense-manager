@@ -2,48 +2,47 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import EditingExpense from "@/components/EditingExpense";
+import DeletingExpense from "@/components/DeletingExpense";
 
 const page = () => {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionloading, setActionLoading] = useState(false);
+  const [isEditingnote, setIsEditingnote] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(null);
+
   const { slug } = useParams();
   let month = slug.split("%20");
   const monthname = month.join(" ");
+
+  function getMonthRange(monthString) {
+    // monthString = "June 2025"
+    const [monthName, year] = monthString.split(" ");
+    const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth();
+
+    const startDate = new Date(year, monthIndex, 1); // First day of the month
+    const endDate = new Date(year, monthIndex + 1, 1); // First day of next month
+
+    return {
+      startDate: startDate.toISOString(), // formatted for Supabase
+      endDate: endDate.toISOString(),
+    };
+  }
+  const { startDate, endDate } = getMonthRange(monthname);
 
   async function fetchExpenses() {
     const { data, error } = await supabase
       .from("expenses")
       .select("*")
+      .gt("created_at", startDate)
+      .lt("created_at", endDate)
       .order("created_at", { ascending: false });
     if (error) console.log(error.message);
     else setExpenses(data);
   }
-
-  function groupByMonth(expenses) {
-    const grouped = {};
-
-    expenses.forEach((expense) => {
-      const date = new Date(expense.created_at);
-      const monthKey = date.toLocaleString("default", {
-        month: "long",
-        year: "numeric",
-      }); // e.g., "June 2025"
-
-      if (!grouped[monthKey]) grouped[monthKey] = [];
-      grouped[monthKey].push(expense);
-    });
-
-    return grouped;
-  }
-
   useEffect(() => {
-    async function fetchAllData() {
-      await fetchExpenses();
-      setLoading(false);
-    }
-
-    fetchAllData();
+    fetchExpenses().then(() => setLoading(false));
   }, []);
 
   async function handleDelete(id) {
@@ -56,17 +55,30 @@ const page = () => {
     if (error) console.log(error.message);
     else {
       console.log("Deleted");
-      fetchExpenses();
+      await fetchExpenses();
     }
     setActionLoading(false);
+    console.log(expenses);
   }
 
-  const monthlyexpenses = groupByMonth(expenses)[monthname];
-  const totalAmount =
-    monthlyexpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
+  const totalAmount = expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:pt-8">
+    <div className="max-w-4xl mt-2 mx-auto px-4 sm:pt-8 lg:max-h-[90vh]">
+      {isEditingnote && (
+        <EditingExpense
+          expense={isEditingnote}
+          setIsEditingNote={setIsEditingnote}
+          fetchExpenses={fetchExpenses}
+        />
+      )}
+      {isDeleting && (
+        <DeletingExpense
+          id={isDeleting}
+          setIsDeleting={setIsDeleting}
+          fetchExpenses={fetchExpenses}
+        />
+      )}
       {loading ? (
         <div className="flex justify-center items-center h-[50vh]">
           <div className="text-lg text-gray-600 font-medium animate-pulse bg-white px-6 py-4 rounded-lg shadow">
@@ -74,12 +86,15 @@ const page = () => {
           </div>
         </div>
       ) : (
-        <div key={month} className="sm:mb-8 bg-gray-100 pb-5 pt-5 rounded-lg shadow">
+        <div
+          key={month}
+          className="sm:mb-8  bg-gray-100 pb-5 pt-5 rounded-lg shadow lg:max-h-[90vh]"
+        >
           <h2 className="text-3xl font-extrabold text-center text-black-700 mb-6">
             {monthname}
           </h2>
-          <ul className="space-y-4 p-2 overflow-auto max-h-100 ">
-            {monthlyexpenses?.map((expense) => {
+          <ul className="space-y-4 px-2  sm:px-4 overflow-y-auto max-h-[65vh] sm:max-h-[60vh] md:max-h-[70vh] xl:max-h-[60vh]">
+            {expenses?.map((expense) => {
               return (
                 <li
                   key={expense.id}
@@ -99,6 +114,7 @@ const page = () => {
                     {/* Center - Buttons */}
                     <div className="flex-shrink-0 flex gap-3 items-center">
                       <button
+                        onClick={() => setIsEditingnote(expense)}
                         disabled={actionloading}
                         className={`px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer
                         ${
@@ -111,7 +127,7 @@ const page = () => {
                       </button>
                       <button
                         disabled={actionloading}
-                        onClick={() => handleDelete(expense.id)}
+                        onClick={() => setIsDeleting(expense.id)}
                         className={`px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer
                         ${
                           actionloading

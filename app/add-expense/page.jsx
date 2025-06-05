@@ -9,51 +9,29 @@ const page = () => {
   const [title, setTile] = useState("");
   const [amount, setamount] = useState("");
   const [note, setNote] = useState("");
-  // const [profile, setProfile] = useState(null);
   const [date, setDate] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { user } = useAuth();
   useEffect(() => {
     if (!user) router.push("login");
   }, []);
 
-  // useEffect(() => {
-  //   async function fetchUser() {
-  //     const { data, error } = await supabase
-  //       .from("profiles")
-  //       .select("*")
-  //       .eq("id", user.id);
-  //     if (error) console.log(error.message);
-  //     else {
-  //       setProfile(data[0]);
-  //     }
-  //   }
-  //   fetchUser();
-  // }, []);
-
-  // Get current date
-  const today = new Date();
-
-  // Extract day, month, and year
-  let day = today.getDate();
-  let month = today.getMonth() + 1;
-  let year = today.getFullYear();
-
-  // Add leading zero to day and month if needed
-  day = day < 10 ? "0" + day : day;
-  month = month < 10 ? "0" + month : month;
-
-  // Format the date as dd/mm/yyyy
-  const formattedDate = `${month}-${day}-${year}`;
-
   async function handleSubmit(e) {
     e.preventDefault();
+    if (title.trim().length === 0) {
+      alert("Title cannot be blank");
+      return;
+    }
+    setLoading(true);
+
+    const createdAt = date ? new Date(date) : new Date();
     const { data, error } = await supabase.from("expenses").insert({
       title,
-      amount,
+      amount: Number(amount),
       note,
       user_id: user.id,
-      created_at: date ? date : formattedDate,
+      created_at: createdAt.toISOString(),
     });
     if (error) console.log(error.message);
     else {
@@ -63,12 +41,12 @@ const page = () => {
       setNote("");
       setDate("");
     }
+
+    setLoading(false);
   }
 
   return (
-    <div className="max-w-4xl mx-auto sm:mt-10 mt-6 p-8 bg-gray-100 rounded-xl shadow-lg font-sans">
-      
-
+    <div className="max-w-4xl mx-auto mt-6 p-8 bg-gray-100 rounded-xl shadow-lg font-sans sm:mt-60 xl:mt-6">
       <h1 className="text-3xl font-bold text-center text-white bg-gradient-to-r from-red-400 to-yellow-400 py-3 rounded-md uppercase tracking-wide mb-6">
         Add Expense
       </h1>
@@ -108,6 +86,8 @@ const page = () => {
             onChange={(e) => setNote(e.target.value)}
             className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:ring-green-500 focus:border-green-500"
           />
+        </div>
+        <div>
           <label className="block text-sm font-medium text-gray-700">
             Date
           </label>
@@ -120,7 +100,8 @@ const page = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-green-600 text-white font-semibold py-2 rounded-md hover:bg-green-700 transition"
+          disabled={loading}
+          className="w-full bg-green-600 text-white font-semibold py-2 rounded-md hover:bg-green-700 transition hover:cursor-pointer disabled:bg-gray-500 disabled:hover:cursor-no-drop"
         >
           Submit
         </button>

@@ -9,7 +9,6 @@ const page = () => {
   const router = useRouter();
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const { user } = useAuth();
 
   async function fetchExpenses() {
@@ -32,25 +31,22 @@ const page = () => {
 
   function groupByMonth(expenses) {
     const grouped = {};
-
     expenses.forEach((expense) => {
       const date = new Date(expense.created_at);
       const monthKey = date.toLocaleString("default", {
         month: "long",
         year: "numeric",
-      }); // e.g., "June 2025"
-
+      });
       if (!grouped[monthKey]) grouped[monthKey] = [];
       grouped[monthKey].push(expense);
     });
-
     return grouped;
   }
 
   const groupedExpenses = groupByMonth(expenses);
 
   return (
-    <div className="max-w-4xl mx-auto mt-5 md:mt-10 p-5 bg-gray-100 rounded-xl shadow-lg font-sans">
+    <div className="max-w-4xl max-h-[80vh] md:max-h-[90vh] lg:max-h-[800px] mx-auto mt-5 p-4 md:p-6 font-sans md:max-w-7xl bg-gray-100 rounded-xl shadow-lg ">
       {loading ? (
         <div className="flex justify-center items-center h-[70vh]">
           <div className="bg-white text-gray-600 text-lg px-6 py-4 rounded-lg shadow-md animate-pulse">
@@ -59,7 +55,7 @@ const page = () => {
         </div>
       ) : (
         <>
-          <h2 className="text-2xl font-semibold text-center text-gray-800 mt-2 mb-8">
+          <h2 className="text-2xl font-semibold text-center text-gray-800 mt-2 mb-6 sm:mb-8">
             All Expenses
           </h2>
 
@@ -69,16 +65,12 @@ const page = () => {
             </p>
           )}
 
-          <div
-            className="grid gap-6 max-h-[375px] overflow-y-auto px-2 mb-6
-                  sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3  sm:max-h-[400px]"
-          >
+          <div className="grid max-h-[55vh] lg:max-h-[60vh] md:max-h-[80vh] gap-6 overflow-y-auto sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-1 sm:px-2">
             {Object.keys(groupedExpenses).map((month) => {
               const total = groupedExpenses[month].reduce(
                 (sum, expense) => sum + expense.amount,
                 0
               );
-
               return (
                 <MonthExpenseCard key={month} month={month} total={total} />
               );
