@@ -51,7 +51,7 @@ const page = () => {
 
   const filteredExpenses = expenses.filter((expense) => {
     const matchesCategory =
-      categoryFilter === "" || expense.category.toLowerCase() === categoryFilter.toLowerCase();
+      categoryFilter === "" || expense.category === categoryFilter;
 
     const matchesSearch =
       expense.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -213,7 +213,7 @@ const page = () => {
 
           <div className="mt-5 text-center">
             <div className="inline-block bg-green-100 text-green-800 font-semibold sm:text-lg text-sm px-6 py-3 rounded-xl shadow-md">
-              Total Expenses for {monthname}: ₹{totalAmount}
+              Total Expenses  {categoryFilter ? `for ${categoryFilter}` : ""} in {monthname}: ₹{totalAmount}
             </div>
           </div>
         </div>
