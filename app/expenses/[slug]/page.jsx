@@ -17,6 +17,7 @@ const page = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [sortOrder, setSortOrder] = useState("");
+  const [sortOrderAmount, setSortOrderAmount] = useState("");
   useEffect(() => {
     console.log(sortOrder);
   }, [sortOrder]);
@@ -77,10 +78,7 @@ const page = () => {
     acc[date].push(expense);
     return acc;
   }, {});
-
-  let sortedDates = Object.keys(groupedByDate).sort(
-    (a, b) => new Date(b) - new Date(a)
-  );
+  let sortedDates;
 
   switch (sortOrder) {
     case "newest": {
@@ -92,6 +90,12 @@ const page = () => {
     case "oldest": {
       sortedDates = Object.keys(groupedByDate).sort(
         (a, b) => new Date(a) - new Date(b)
+      );
+      break;
+    }
+    default: {
+      sortedDates = Object.keys(groupedByDate).sort(
+        (a, b) => new Date(b) - new Date(a)
       );
       break;
     }
@@ -132,17 +136,43 @@ const page = () => {
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="border p-2 rounded"
+                className="w-full sm:w-auto bg-white border border-gray-300 text-gray-800 text-sm sm:text-base rounded-md px-4 py-2 pr-10 focus:outline-none cursor-pointer appearance-none transition-all"
+                // className="bg-white border border-gray-300 text-gray-800 text-sm sm:text-base rounded-md px-4 py-2 pr-10 focus:outline-none cursor-pointer appearance-none transition-all"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='currentColor' class='chevron-down' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.25 8.27a.75.75 0 01-.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 0.75rem center",
+                  backgroundSize: "1rem",
+                }}
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
+              </select>
+              <select
+                value={sortOrderAmount}
+                onChange={(e) => setSortOrderAmount(e.target.value)}
+                className="bg-white border border-gray-300 text-gray-800 text-sm sm:text-base rounded-md px-4 py-2 pr-10 focus:outline-none cursor-pointer appearance-none transition-all"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='currentColor' class='chevron-down' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.25 8.27a.75.75 0 01-.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 0.75rem center",
+                  backgroundSize: "1rem",
+                }}
+              >
+                <option value="">Default</option>
                 <option value="high">Highest Amount</option>
                 <option value="low">Lowest Amount</option>
               </select>
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="border p-2 rounded hover:cursor-pointer"
+                className="bg-white border border-gray-300 text-gray-800 text-sm sm:text-base rounded-md px-4 py-2 pr-10 focus:outline-none cursor-pointer appearance-none transition-all"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='currentColor' class='chevron-down' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.25 8.27a.75.75 0 01-.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 0.75rem center",
+                  backgroundSize: "1rem",
+                }}
               >
                 <option
                   value=""
@@ -190,55 +220,68 @@ const page = () => {
                 className="border p-2 rounded flex-grow"
               />
             </div>
-            {sortedDates.map((date) => (
-              <div key={date}>
-                <h3 className="text-lg font-bold text-gray-700 mb-2">
-                  {new Date(date).toDateString()}
-                </h3>
+            {sortedDates.map((date) => {
+              if (sortOrderAmount === "high") {
+                groupedByDate[date].sort((a, b) => {
+                  return b.amount - a.amount;
+                });
+              } else if (sortOrderAmount === "low") {
+                groupedByDate[date].sort((a, b) => {
+                  return a.amount - b.amount;
+                });
+              }
+              return (
+                <div key={date}>
+                  <h3 className="text-lg font-bold text-gray-700 mb-2">
+                    {new Date(date).toDateString()}
+                  </h3>
 
-                <ul className="space-y-4">
-                  {groupedByDate[date].map((expense) => (
-                    <li
-                      key={expense.id}
-                      className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xl font-semibold text-gray-800 truncate">
-                            {expense.title}
-                          </p>
-                          <p className="text-sm text-gray-500 mt-1 truncate">
-                            {expense.note}
-                          </p>
-                          {expense.category && (
-                            <CategoryBadge category={expense.category} />
-                          )}
-                        </div>
-                        <div className="flex-shrink-0 flex gap-3 items-center">
-                          <button
-                            onClick={() => setIsEditingnote(expense)}
-                            className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => setIsDeleting(expense.id)}
-                            className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-red-100 text-red-700 border-red-300 hover:bg-red-200"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-lg font-bold text-rose-600">
-                            ₹{expense.amount}
-                          </p>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+                  <ul className="space-y-4">
+                    {groupedByDate[date].map((expense) => {
+                      return (
+                        <li
+                          key={expense.id}
+                          className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xl font-semibold text-gray-800 truncate">
+                                {expense.title}
+                              </p>
+                              <p className="text-sm text-gray-500 mt-1 truncate">
+                                {expense.note}
+                              </p>
+                              {expense.category && (
+                                <CategoryBadge category={expense.category} />
+                              )}
+                            </div>
+                            <div className="flex-shrink-0 flex gap-3 items-center">
+                              <button
+                                onClick={() => setIsEditingnote(expense)}
+                                className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => setIsDeleting(expense.id)}
+                                className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-red-100 text-red-700 border-red-300 hover:bg-red-200"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                            <div className="text-right flex-shrink-0">
+                              <p className="text-lg font-bold text-rose-600">
+                                ₹{expense.amount}
+                              </p>
+                            </div>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
 
           <div className="mt-5 text-center">
