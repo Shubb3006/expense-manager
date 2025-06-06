@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import EditingExpense from "@/components/EditingExpense";
 import DeletingExpense from "@/components/DeletingExpense";
+import CategoryBadge from "@/components/CategoryBadge";
 
 const page = () => {
   const [expenses, setExpenses] = useState([]);
@@ -11,6 +12,9 @@ const page = () => {
   // const [actionloading, setActionLoading] = useState(false);
   const [isEditingnote, setIsEditingnote] = useState(null);
   const [isDeleting, setIsDeleting] = useState(null);
+
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { slug } = useParams();
   let month = slug.split("%20");
@@ -47,8 +51,21 @@ const page = () => {
 
   const totalAmount = expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
+  const filteredExpenses = expenses.filter((expense) => {
+    const matchesCategory =
+      categoryFilter === "" || expense.category === categoryFilter;
+
+    const matchesSearch =
+      expense.title?.toLowerCase().includes(searchTerm.toLowerCase())||
+      expense.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      expense.notes?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      searchTerm === "";
+
+    return matchesCategory && matchesSearch;
+  });
+
   //grouping with respectr of date
-  const groupedByDate = expenses.reduce((acc, expense) => {
+  const groupedByDate = filteredExpenses.reduce((acc, expense) => {
     const date = expense.created_at.split("T")[0]; // e.g., "2025-06-04"
     if (!acc[date]) acc[date] = [];
     acc[date].push(expense);
@@ -56,7 +73,7 @@ const page = () => {
   }, {});
 
   const sortedDates = Object.keys(groupedByDate).sort(
-    (a, b) => new Date(b)- new Date(a)
+    (a, b) => new Date(b) - new Date(a)
   );
 
   return (
@@ -90,11 +107,34 @@ const page = () => {
             {monthname}
           </h2>
           <div className="space-y-6 px-2 sm:px-4 overflow-y-auto max-h-[65vh] sm:max-h-[60vh] md:max-h-[70vh] xl:max-h-[60vh]">
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="border p-2 rounded hover:cursor-pointer"
+              >
+                <option value=""  className="border p-2 rounded hover:cursor-pointer">All Categories</option>
+                <option value="Food"  className="border p-2 rounded hover:cursor-pointer">Food</option>
+                <option value="Travel"  className="border p-2 rounded hover:cursor-pointer">Travel</option>
+                <option value="Shopping"  className="border p-2 rounded hover:cursor-pointer">Shopping</option>
+                <option value="Bills"  className="border p-2 rounded hover:cursor-pointer">Bills</option>
+                <option value="Other " className="border p-2 rounded hover:cursor-pointer">Other</option>
+              </select>
+
+              <input
+                type="text"
+                placeholder="Search expenses..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="border p-2 rounded flex-grow"
+              />
+            </div>
             {sortedDates.map((date) => (
               <div key={date}>
                 <h3 className="text-lg font-bold text-gray-700 mb-2">
                   {new Date(date).toDateString()}
                 </h3>
+
                 <ul className="space-y-4">
                   {groupedByDate[date].map((expense) => (
                     <li
@@ -109,6 +149,9 @@ const page = () => {
                           <p className="text-sm text-gray-500 mt-1 truncate">
                             {expense.note}
                           </p>
+                          {expense.category && (
+                            <CategoryBadge category={expense.category} />
+                          )}
                         </div>
                         <div className="flex-shrink-0 flex gap-3 items-center">
                           <button

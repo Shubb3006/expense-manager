@@ -1,6 +1,6 @@
 import Link from "next/link";
-
-export default function MonthExpenseCard({ month, total }) {
+import React from "react";
+const MonthExpenseCard=({ month, total })=> {
   return (
     <div
       className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition-transform duration-300 ease-in-out transform hover:-translate-y-1"
@@ -17,3 +17,7 @@ export default function MonthExpenseCard({ month, total }) {
     </div>
   );
 }
+
+
+// export default React.memo(MonthExpenseCard);
+export default MonthExpenseCard

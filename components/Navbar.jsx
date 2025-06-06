@@ -50,20 +50,22 @@ const Navbar = () => {
             Home
           </Link>
           <Link
-            href={user ? "/expenses" : "/login"}
+            // href={user ? "/expenses" : "/login"}
+            href={"/expenses"}
             className={ pathName==="/expenses" || pathName.startsWith("/expenses") ? `text-yellow-400` : `hover:text-yellow-400`}
           >
             Expenses
           </Link>
+           <Link href="/add-expense" className={ pathName==="/add-expense"? `text-yellow-400` : `hover:text-yellow-400`}>
+                AddExpense
+              </Link>
           {!user ? (
             <Link href="/login" className={ pathName==="/login" ? `text-yellow-400` : `hover:text-yellow-400`}>
               Login
             </Link>
           ) : (
             <>
-              <Link href="/add-expense" className={ pathName==="/add-expense"? `text-yellow-400` : `hover:text-yellow-400`}>
-                AddExpense
-              </Link>
+             
               <a
                 onClick={handleLogout}
                 className="hover:text-red-400 hover:cursor-pointer"
