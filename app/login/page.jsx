@@ -38,82 +38,52 @@ const Page = () => {
         router.push("/");
       }
     } else {
-      // const { data: signedUpData, error: signUpError } = await supabase
-      //   .from("profiles")
-      //   .select("*")
-      //   .eq("email", email);
+      const { data: existingUser, error: existingUserError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("email", email.toLowerCase());
 
-      // if (signedUpData) {
-      //   console.log(email);
-      //   console.log(signedUpData);
-      //   setLoading(false);
-      //   setErr(true);
-      //   setMessage("User Already Exists");
+      if (existingUser.length>0) {
+        setErr(true);
+        setMessage("Email already registered. Please log in.");
+        setLoading(false);
+        return;
+      }
 
-      //   return;
-      // }
-
-      const { data: signedupData, error: signedupError } =
+      const { data: signUpData, error: signUpError } =
         await supabase.auth.signUp({
           email,
           password,
         });
 
-      if (!signedupData.user) {
+      if (signUpError) {
         setErr(true);
-        setMessage("User already registered. Please Confirm Your email.");
+        setMessage(signUpError.message);
         setLoading(false);
         return;
       }
-      // if (data.user && !error) {
-      //   setErr(true);
-      //   setMessage("User already registered. Please log in.");
-      //   setLoading(false);
-      //   return;
-      // }
-
-      if (!signedupError) {
-        const { data, error } = await supabase
+      if (signUpData.user) {
+        const { data: insertedProfile, error: insertError } = await supabase
           .from("profiles")
           .insert([
             {
-              id: signedupData.user.id,
+              id: signUpData.user.id,
               display_name: name,
-              email: signedupData.user.email,
+              email: signUpData.user.email.toLowerCase(),
             },
-          ]);
+          ])
+          .select();
+        console.log("Inserted profile:", insertedProfile);
+        console.log("Inserted error:", insertError);
 
-        if (error) {
-          setErr(true);
-          setMessage("User already registered. Please log in.");
-          setLoading(false);
-          return;
-        } else {
-          setEmail("");
-          setName("");
-          setPassword("");
-        }
+        setEmail("");
+        setName("");
+        setPassword("");
+
+        setErr(false);
+        setMessage("Account created successfully! Please check your email.");
       }
-
-      // if (error) {
-      //   setErr(true);
-      //   setMessage(error.message);
-      // } else {
-      //   setErr(false);
-      //   setMessage("Account created successfully! confirmation email sent");
-      //   if (data.user) {
-      //     await supabase
-      //       .from("profiles")
-      //       .insert([
-      //         { id: data.user.id, display_name: name, email: data.user.email },
-      //       ]);
-      //   }
-      //   setEmail("");
-      //   setName("");
-      //   setPassword("");
-      // }
     }
-
     setLoading(false);
   }
 
