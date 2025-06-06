@@ -49,20 +49,21 @@ const page = () => {
     fetchExpenses().then(() => setLoading(false));
   }, []);
 
-  const totalAmount = expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
-
   const filteredExpenses = expenses.filter((expense) => {
     const matchesCategory =
-      categoryFilter === "" || expense.category === categoryFilter;
+      categoryFilter === "" || expense.category.toLowerCase() === categoryFilter.toLowerCase();
 
     const matchesSearch =
-      expense.title?.toLowerCase().includes(searchTerm.toLowerCase())||
+      expense.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       expense.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       expense.notes?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       searchTerm === "";
 
     return matchesCategory && matchesSearch;
   });
+
+  const totalAmount =
+    filteredExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
   //grouping with respectr of date
   const groupedByDate = filteredExpenses.reduce((acc, expense) => {
@@ -113,12 +114,42 @@ const page = () => {
                 onChange={(e) => setCategoryFilter(e.target.value)}
                 className="border p-2 rounded hover:cursor-pointer"
               >
-                <option value=""  className="border p-2 rounded hover:cursor-pointer">All Categories</option>
-                <option value="Food"  className="border p-2 rounded hover:cursor-pointer">Food</option>
-                <option value="Travel"  className="border p-2 rounded hover:cursor-pointer">Travel</option>
-                <option value="Shopping"  className="border p-2 rounded hover:cursor-pointer">Shopping</option>
-                <option value="Bills"  className="border p-2 rounded hover:cursor-pointer">Bills</option>
-                <option value="Other " className="border p-2 rounded hover:cursor-pointer">Other</option>
+                <option
+                  value=""
+                  className="border p-2 rounded hover:cursor-pointer"
+                >
+                  All Categories
+                </option>
+                <option
+                  value="Food"
+                  className="border p-2 rounded hover:cursor-pointer"
+                >
+                  Food
+                </option>
+                <option
+                  value="Travel"
+                  className="border p-2 rounded hover:cursor-pointer"
+                >
+                  Travel
+                </option>
+                <option
+                  value="Shopping"
+                  className="border p-2 rounded hover:cursor-pointer"
+                >
+                  Shopping
+                </option>
+                <option
+                  value="Bills"
+                  className="border p-2 rounded hover:cursor-pointer"
+                >
+                  Bills
+                </option>
+                <option
+                  value="Other"
+                  className="border p-2 rounded hover:cursor-pointer"
+                >
+                  Other
+                </option>
               </select>
 
               <input

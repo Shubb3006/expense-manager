@@ -7,6 +7,7 @@ const EditingExpense = ({ expense, setIsEditingNote, fetchExpenses }) => {
   const [title, setTile] = useState(expense.title);
   const [amount, setAmount] = useState(expense.amount);
   const [note, setNote] = useState(expense.note);
+  const [category, setCategory] = useState(expense.category || "");
   const [loading, setLoading] = useState(false);
 
   async function handleEdit(e) {
@@ -14,7 +15,12 @@ const EditingExpense = ({ expense, setIsEditingNote, fetchExpenses }) => {
     setLoading(true);
     const { error } = await supabase
       .from("expenses")
-      .update({ title: title.trim(), amount, note: note.trim() })
+      .update({
+        title: title.trim(),
+        amount,
+        note: note.trim(),
+        category: category,
+      })
       .eq("id", expense.id);
     if (error) console.log(error);
     else console.log("Edited");
@@ -83,6 +89,30 @@ const EditingExpense = ({ expense, setIsEditingNote, fetchExpenses }) => {
               className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:ring-green-500 focus:border-green-500"
             />
           </div>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="border p-2 rounded w-full cursor-pointer"
+          >
+            <option value="" className="cursor-pointer">
+              Select category
+            </option>
+            <option value="Food" className="cursor-pointer">
+              Food
+            </option>
+            <option value="Travel" className="cursor-pointer">
+              Travel
+            </option>
+            <option value="Shopping" className="cursor-pointer">
+              Shopping
+            </option>
+            <option value="Bills" className="cursor-pointer">
+              Bills
+            </option>
+            <option value="Other" className="cursor-pointer">
+              Other
+            </option>
+          </select>
           <button
             type="submit"
             disabled={loading}
