@@ -16,6 +16,11 @@ const page = () => {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [sortOrder, setSortOrder] = useState("");
+  useEffect(() => {
+    console.log(sortOrder);
+  }, [sortOrder]);
+
   const { slug } = useParams();
   let month = slug.split("%20");
   const monthname = month.join(" ");
@@ -73,9 +78,24 @@ const page = () => {
     return acc;
   }, {});
 
-  const sortedDates = Object.keys(groupedByDate).sort(
+  let sortedDates = Object.keys(groupedByDate).sort(
     (a, b) => new Date(b) - new Date(a)
   );
+
+  switch (sortOrder) {
+    case "newest": {
+      sortedDates = Object.keys(groupedByDate).sort(
+        (a, b) => new Date(b) - new Date(a)
+      );
+      break;
+    }
+    case "oldest": {
+      sortedDates = Object.keys(groupedByDate).sort(
+        (a, b) => new Date(a) - new Date(b)
+      );
+      break;
+    }
+  }
 
   return (
     <div className="max-w-4xl mt-2 mx-auto px-4 sm:pt-8 lg:max-h-[90vh]">
@@ -109,6 +129,16 @@ const page = () => {
           </h2>
           <div className="space-y-6 px-2 sm:px-4 overflow-y-auto max-h-[65vh] sm:max-h-[60vh] md:max-h-[70vh] xl:max-h-[60vh]">
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="border p-2 rounded"
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="high">Highest Amount</option>
+                <option value="low">Lowest Amount</option>
+              </select>
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
@@ -213,7 +243,8 @@ const page = () => {
 
           <div className="mt-5 text-center">
             <div className="inline-block bg-green-100 text-green-800 font-semibold sm:text-lg text-sm px-6 py-3 rounded-xl shadow-md">
-              Total Expenses  {categoryFilter ? `for ${categoryFilter}` : ""} in {monthname}: ₹{totalAmount}
+              Total Expenses {categoryFilter ? `for ${categoryFilter}` : ""} in{" "}
+              {monthname}: ₹{totalAmount}
             </div>
           </div>
         </div>
