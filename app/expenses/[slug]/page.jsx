@@ -47,6 +47,18 @@ const page = () => {
 
   const totalAmount = expenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
+  //grouping with respectr of date
+  const groupedByDate = expenses.reduce((acc, expense) => {
+    const date = expense.created_at.split("T")[0]; // e.g., "2025-06-04"
+    if (!acc[date]) acc[date] = [];
+    acc[date].push(expense);
+    return acc;
+  }, {});
+
+  const sortedDates = Object.keys(groupedByDate).sort(
+    (a, b) => new Date(b)- new Date(a)
+  );
+
   return (
     <div className="max-w-4xl mt-2 mx-auto px-4 sm:pt-8 lg:max-h-[90vh]">
       {isEditingnote && (
@@ -77,57 +89,54 @@ const page = () => {
           <h2 className="text-3xl font-extrabold text-center text-black-700 mb-6">
             {monthname}
           </h2>
-          <ul className="space-y-4 px-2  sm:px-4 overflow-y-auto max-h-[65vh] sm:max-h-[60vh] md:max-h-[70vh] xl:max-h-[60vh]">
-            {expenses?.map((expense) => {
-              return (
-                <li
-                  key={expense.id}
-                  className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    {/* Left - Title & Note */}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xl font-semibold text-gray-800 truncate">
-                        {expense.title}
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1 truncate">
-                        {expense.note}
-                      </p>
-                    </div>
+          <div className="space-y-6 px-2 sm:px-4 overflow-y-auto max-h-[65vh] sm:max-h-[60vh] md:max-h-[70vh] xl:max-h-[60vh]">
+            {sortedDates.map((date) => (
+              <div key={date}>
+                <h3 className="text-lg font-bold text-gray-700 mb-2">
+                  {new Date(date).toDateString()}
+                </h3>
+                <ul className="space-y-4">
+                  {groupedByDate[date].map((expense) => (
+                    <li
+                      key={expense.id}
+                      className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xl font-semibold text-gray-800 truncate">
+                            {expense.title}
+                          </p>
+                          <p className="text-sm text-gray-500 mt-1 truncate">
+                            {expense.note}
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0 flex gap-3 items-center">
+                          <button
+                            onClick={() => setIsEditingnote(expense)}
+                            className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => setIsDeleting(expense.id)}
+                            className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-red-100 text-red-700 border-red-300 hover:bg-red-200"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <p className="text-lg font-bold text-rose-600">
+                            ₹{expense.amount}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
 
-                    {/* Center - Buttons */}
-                    <div className="flex-shrink-0 flex gap-3 items-center">
-                      <button
-                        onClick={() => setIsEditingnote(expense)}
-                        
-                        className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200"
-
-                      >
-                        Edit
-                      </button>
-                      <button
-                        
-                        onClick={() => setIsDeleting(expense.id)}
-                        className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-red-100 text-red-700 border-red-300 hover:bg-red-200"
-                      >
-                        Delete
-                      </button>
-                    </div>
-
-                    {/* Right - Amount & Date */}
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-lg font-bold text-rose-600">
-                        ₹{expense.amount}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        {expense.created_at.split("T")[0]}
-                      </p>
-                    </div>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
           <div className="mt-5 text-center">
             <div className="inline-block bg-green-100 text-green-800 font-semibold sm:text-lg text-sm px-6 py-3 rounded-xl shadow-md">
               Total Expenses for {monthname}: ₹{totalAmount}
