@@ -68,7 +68,7 @@ const Page = () => {
           .insert([
             {
               id: signUpData.user.id,
-              display_name: name,
+              display_name: name.toLowerCase(),
               email: signUpData.user.email.toLowerCase(),
             },
           ])

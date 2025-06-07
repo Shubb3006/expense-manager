@@ -143,7 +143,7 @@ const page = () => {
           <h2 className="text-3xl font-extrabold text-center text-black-700 mb-6">
             {monthname}
           </h2>
-          <div className="space-y-6 px-2 sm:px-4 overflow-y-auto max-h-[65vh] sm:max-h-[60vh] md:max-h-[70vh] xl:max-h-[60vh]">
+          <div className="space-y-6 px-2 sm:px-4 overflow-y-auto max-h-[45vh] sm:max-h-[60vh] md:max-h-[70vh] xl:max-h-[60vh]">
             <FilterBar />
             {sortedDates.map((date) => {
               if (sortOrderAmount === "high") {

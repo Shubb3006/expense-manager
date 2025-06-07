@@ -31,11 +31,22 @@ const page = () => {
       return;
     }
     setLoading(true);
-    // const { data: splitsWithData, error: splitsWithError } = await supabase
-    //   .from("profiles")
-    //   .select()
-    //   .eq("id", splitsWith);
-      
+
+    if (splitsWith) {
+      const { data: splitsWithData, error: splitsWithError } = await supabase
+        .from("profiles")
+        .select()
+        .eq("display_name".toLowerCase(), splitsWith.toLowerCase());
+
+      if (splitsWithData.length > 0) {
+        console.log(splitsWithData);
+      } else {
+        alert(`${splitsWith} is not a right user`);
+        console.log(splitsWithData);
+        setLoading(false);
+        return;
+      }
+    }
 
     const createdAt = date ? new Date(date) : new Date();
     const { error } = await supabase.from("expenses").insert({
