@@ -13,7 +13,7 @@ const FilterBar = () => {
   } = useExpenseContext();
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-around mb-6">
         <div className="flex flex-row">
           <select
             value={sortOrder}
