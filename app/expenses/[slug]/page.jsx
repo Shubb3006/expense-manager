@@ -5,6 +5,8 @@ import { supabase } from "@/lib/supabase";
 import EditingExpense from "@/components/EditingExpense";
 import DeletingExpense from "@/components/DeletingExpense";
 import CategoryBadge from "@/components/CategoryBadge";
+import { useExpenseContext } from "@/context/ExpenseContext";
+import FilterBar from "@/components/FilterBar";
 
 const page = () => {
   const [expenses, setExpenses] = useState([]);
@@ -13,18 +15,28 @@ const page = () => {
   const [isEditingnote, setIsEditingnote] = useState(null);
   const [isDeleting, setIsDeleting] = useState(null);
 
-  const [categoryFilter, setCategoryFilter] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  // const [categoryFilter, setCategoryFilter] = useState("");
+  // const [searchTerm, setSearchTerm] = useState("");
 
-  const [sortOrder, setSortOrder] = useState("");
-  const [sortOrderAmount, setSortOrderAmount] = useState("");
-  useEffect(() => {
-    console.log(sortOrder);
-  }, [sortOrder]);
+  const {
+    categoryFilter,
+    searchTerm,
+    monthname,
+    setMonthName,
+    sortOrder,
+    sortOrderAmount,
+  } = useExpenseContext();
+
+  // const [sortOrder, setSortOrder] = useState("");
+  // const [sortOrderAmount, setSortOrderAmount] = useState("");
 
   const { slug } = useParams();
-  let month = slug.split("%20");
-  const monthname = month.join(" ");
+  useEffect(() => {
+    setMonthName(decodeURIComponent(slug));
+  }, [slug]);
+
+  // let monthname = decodeURIComponent(slug);
+  // const monthname = month.join(" ");
 
   function getMonthRange(monthString) {
     // monthString = "June 2025"
@@ -39,7 +51,7 @@ const page = () => {
       endDate: endDate.toISOString(),
     };
   }
-  const { startDate, endDate } = getMonthRange(monthname);
+  const { startDate, endDate } = monthname ? getMonthRange(monthname) : "";
 
   async function fetchExpenses() {
     const { data, error } = await supabase
@@ -53,7 +65,7 @@ const page = () => {
   }
   useEffect(() => {
     fetchExpenses().then(() => setLoading(false));
-  }, []);
+  }, [monthname]);
 
   const filteredExpenses = expenses.filter((expense) => {
     const matchesCategory =
@@ -125,101 +137,14 @@ const page = () => {
         </div>
       ) : (
         <div
-          key={month}
+          key={monthname}
           className="sm:mb-8  bg-gray-100 pb-5 pt-5 rounded-lg shadow lg:max-h-[90vh]"
         >
           <h2 className="text-3xl font-extrabold text-center text-black-700 mb-6">
             {monthname}
           </h2>
           <div className="space-y-6 px-2 sm:px-4 overflow-y-auto max-h-[65vh] sm:max-h-[60vh] md:max-h-[70vh] xl:max-h-[60vh]">
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <select
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-                className="w-full sm:w-auto bg-white border border-gray-300 text-gray-800 text-sm sm:text-base rounded-md px-4 py-2 pr-10 focus:outline-none cursor-pointer appearance-none transition-all"
-                // className="bg-white border border-gray-300 text-gray-800 text-sm sm:text-base rounded-md px-4 py-2 pr-10 focus:outline-none cursor-pointer appearance-none transition-all"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='currentColor' class='chevron-down' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.25 8.27a.75.75 0 01-.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E")`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "right 0.75rem center",
-                  backgroundSize: "1rem",
-                }}
-              >
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-              </select>
-              <select
-                value={sortOrderAmount}
-                onChange={(e) => setSortOrderAmount(e.target.value)}
-                className="bg-white border border-gray-300 text-gray-800 text-sm sm:text-base rounded-md px-4 py-2 pr-10 focus:outline-none cursor-pointer appearance-none transition-all"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='currentColor' class='chevron-down' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.25 8.27a.75.75 0 01-.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E")`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "right 0.75rem center",
-                  backgroundSize: "1rem",
-                }}
-              >
-                <option value="">Default</option>
-                <option value="high">Highest Amount</option>
-                <option value="low">Lowest Amount</option>
-              </select>
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="bg-white border border-gray-300 text-gray-800 text-sm sm:text-base rounded-md px-4 py-2 pr-10 focus:outline-none cursor-pointer appearance-none transition-all"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='currentColor' class='chevron-down' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.25 8.27a.75.75 0 01-.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E")`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "right 0.75rem center",
-                  backgroundSize: "1rem",
-                }}
-              >
-                <option
-                  value=""
-                  className="border p-2 rounded hover:cursor-pointer"
-                >
-                  All Categories
-                </option>
-                <option
-                  value="Food"
-                  className="border p-2 rounded hover:cursor-pointer"
-                >
-                  Food
-                </option>
-                <option
-                  value="Travel"
-                  className="border p-2 rounded hover:cursor-pointer"
-                >
-                  Travel
-                </option>
-                <option
-                  value="Shopping"
-                  className="border p-2 rounded hover:cursor-pointer"
-                >
-                  Shopping
-                </option>
-                <option
-                  value="Bills"
-                  className="border p-2 rounded hover:cursor-pointer"
-                >
-                  Bills
-                </option>
-                <option
-                  value="Other"
-                  className="border p-2 rounded hover:cursor-pointer"
-                >
-                  Other
-                </option>
-              </select>
-
-              <input
-                type="text"
-                placeholder="Search expenses..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="border p-2 rounded flex-grow"
-              />
-            </div>
+            <FilterBar />
             {sortedDates.map((date) => {
               if (sortOrderAmount === "high") {
                 groupedByDate[date].sort((a, b) => {
@@ -230,11 +155,22 @@ const page = () => {
                   return a.amount - b.amount;
                 });
               }
+
+              const totalAmountOfDay = groupedByDate[date].reduce(
+                (acc, expense) => {
+                  return acc + expense.amount;
+                },
+                0
+              );
+
               return (
                 <div key={date}>
-                  <h3 className="text-lg font-bold text-gray-700 mb-2">
-                    {new Date(date).toDateString()}
-                  </h3>
+                  <div className="text-lg font-semibold text-gray-700 mb-2">
+                    {date}
+                  </div>
+                  <div className="text-md font-bold text-green-600 mb-4">
+                    Total Spent: ₹{totalAmountOfDay}
+                  </div>
 
                   <ul className="space-y-4">
                     {groupedByDate[date].map((expense) => {

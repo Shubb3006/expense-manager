@@ -13,6 +13,7 @@ const page = () => {
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState("");
+  const [splitsWith, setSplitsWith] = useState("");
 
   const { user } = useAuth();
   useEffect(() => {
@@ -30,9 +31,14 @@ const page = () => {
       return;
     }
     setLoading(true);
+    // const { data: splitsWithData, error: splitsWithError } = await supabase
+    //   .from("profiles")
+    //   .select()
+    //   .eq("id", splitsWith);
+      
 
     const createdAt = date ? new Date(date) : new Date();
-    const { data, error } = await supabase.from("expenses").insert({
+    const { error } = await supabase.from("expenses").insert({
       title: title.trim(),
       amount: Number(amount),
       note: note.trim(),
@@ -40,6 +46,7 @@ const page = () => {
       user_id: user.id,
       created_at: createdAt.toISOString(),
     });
+
     if (error) console.log(error.message);
     else {
       alert("New Expense Saved");
@@ -93,6 +100,17 @@ const page = () => {
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
+              className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:ring-green-500 focus:border-green-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Splits With
+            </label>
+            <input
+              type="text"
+              value={splitsWith}
+              onChange={(e) => setSplitsWith(e.target.value)}
               className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:ring-green-500 focus:border-green-500"
             />
           </div>
