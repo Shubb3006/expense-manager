@@ -76,6 +76,12 @@ const FilterBar = () => {
               Travel
             </option>
             <option
+              value="Health & Fitness"
+              className="border p-2 rounded hover:cursor-pointer"
+            >
+              Health & Fitness
+            </option>
+            <option
               value="Shopping"
               className="border p-2 rounded hover:cursor-pointer"
             >

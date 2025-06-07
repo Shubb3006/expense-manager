@@ -51,6 +51,18 @@ const CategoryBadge = ({ category }) => {
             <path d="M10.5 21v-6l-7-4V9l7-4V1l12 10-12 10z" />
           </svg>
         );
+      case "Health & Fitness":
+        return (
+          <svg
+            className="w-4 h-4 text-red-500"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M6 6v3H2v6h4v3m12-12v3h4v6h-4v3M9 12h6" />
+          </svg>
+        );
       default:
         return (
           <svg
@@ -72,6 +84,7 @@ const CategoryBadge = ({ category }) => {
     Food: "bg-green-50 text-green-700 border-green-200",
     Travel: "bg-blue-50 text-blue-700 border-blue-200",
     Others: "bg-gray-50 text-gray-700 border-gray-200",
+    "Health & Fitness": "bg-brown-50 text-brown-700 border-red-200",
   };
 
   const styleClasses = categoryStyles[category] || categoryStyles["Others"];

@@ -103,6 +103,9 @@ const EditingExpense = ({ expense, setIsEditingNote, fetchExpenses }) => {
             <option value="Travel" className="cursor-pointer">
               Travel
             </option>
+            <option value="Health & Fitness" className="cursor-pointer">
+              Health & Fitness
+            </option>
             <option value="Shopping" className="cursor-pointer">
               Shopping
             </option>
