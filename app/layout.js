@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Expense-Manager",
+  icons: {
+    icon: "/favicon.ico",
+  },
   description: "Expense Manager for working Professionals",
 };
 
