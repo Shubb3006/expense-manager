@@ -7,6 +7,7 @@ import DeletingExpense from "@/components/DeletingExpense";
 import CategoryBadge from "@/components/CategoryBadge";
 import { useExpenseContext } from "@/context/ExpenseContext";
 import FilterBar from "@/components/FilterBar";
+import BudgetTracker from "@/components/BudgetTracker";
 
 const page = () => {
   const [expenses, setExpenses] = useState([]);
@@ -145,6 +146,8 @@ const page = () => {
           </h2>
           <div className="space-y-6 px-2 sm:px-4 overflow-y-auto max-h-[61vh] sm:max-h-[60vh] md:max-h-[70vh] xl:max-h-[60vh]">
             <FilterBar />
+            <BudgetTracker expenses={expenses} />
+
             {sortedDates.map((date) => {
               if (sortOrderAmount === "high") {
                 groupedByDate[date].sort((a, b) => {
@@ -162,6 +165,7 @@ const page = () => {
                 },
                 0
               );
+              // console.log(sortedDates)
 
               return (
                 <div key={date}>
@@ -171,8 +175,8 @@ const page = () => {
                   <div className="text-md font-bold text-green-600 mb-4">
                     Total Spent: ₹{totalAmountOfDay}
                   </div>
-
                   <ul className="space-y-4">
+                    {/* {console.log(groupedByDate[date])} */}
                     {groupedByDate[date].map((expense) => {
                       return (
                         <li
