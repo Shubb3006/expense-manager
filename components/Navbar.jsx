@@ -32,7 +32,7 @@ const Navbar = () => {
     <nav className="bg-gray-800 text-white shadow-md">
       {isLogout && (
         <div className="fixed inset-0 z-50 backdrop-blur-sm bg-black/30 flex items-center justify-center">
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6 animate-fadeIn text-black">
+          <div className="relative bg-white rounded-xl shadow-xl  w-[75%] sm:w-full max-w-md p-6 animate-fadeIn text-black">
             {/* Close Button (X) */}
             <button
               onClick={() => setIsLogout(false)}
