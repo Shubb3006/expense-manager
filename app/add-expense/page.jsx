@@ -13,7 +13,6 @@ const page = () => {
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState("");
-  const [splitsWith, setSplitsWith] = useState("");
 
   const { user } = useAuth();
   useEffect(() => {
@@ -111,17 +110,6 @@ const page = () => {
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:ring-green-500 focus:border-green-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Splits With
-            </label>
-            <input
-              type="text"
-              value={splitsWith}
-              onChange={(e) => setSplitsWith(e.target.value)}
               className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:ring-green-500 focus:border-green-500"
             />
           </div>

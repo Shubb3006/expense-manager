@@ -146,7 +146,6 @@ const page = () => {
           </h2>
           <div className="space-y-6 px-2 sm:px-4 overflow-y-auto max-h-[61vh] sm:max-h-[60vh] md:max-h-[70vh] xl:max-h-[60vh]">
             <FilterBar />
-            <BudgetTracker expenses={expenses} />
 
             {sortedDates.map((date) => {
               if (sortOrderAmount === "high") {
