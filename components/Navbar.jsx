@@ -30,13 +30,18 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleKey = (e) => {
+      if (!isLogout) return;
       if (e.key === "Escape") setIsLogout(false);
-      if (e.key === "Enter") handleLogout();
+      if (e.key === "Enter") {
+        const active = document.activeElement;
+        const isInsideModal = active?.closest(".logout-modal"); // add a class to your modal
+        if (isInsideModal) handleLogout();
+      }
     };
 
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, []);
+  }, [isLogout]);
 
   return (
     <nav className="bg-gray-800 text-white shadow-md">
