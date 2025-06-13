@@ -134,6 +134,7 @@ const Page = () => {
               className="mt-1 block w-full px-4 py-2 border rounded-md"
               required
             />
+            {!isLogin && <p>{password}</p>}
           </div>
 
           <button
