@@ -48,6 +48,9 @@ const page = () => {
   // const groupedExpenses = groupByMonth(expenses);
   const groupedExpenses = useMemo(() => groupByMonth(expenses), [expenses]);
 
+
+  
+
   return (
     <ProtectedRoute>
       <div className="max-w-4xl max-h-[80vh] md:max-h-[90vh] lg:max-h-[800px] mx-auto mt-5 p-4 md:p-6 font-sans md:max-w-7xl bg-gray-100 rounded-xl shadow-lg ">

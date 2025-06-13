@@ -7,7 +7,6 @@ import DeletingExpense from "@/components/DeletingExpense";
 import CategoryBadge from "@/components/CategoryBadge";
 import { useExpenseContext } from "@/context/ExpenseContext";
 import FilterBar from "@/components/FilterBar";
-import BudgetTracker from "@/components/BudgetTracker";
 
 const page = () => {
   const [expenses, setExpenses] = useState([]);

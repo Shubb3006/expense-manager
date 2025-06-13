@@ -54,6 +54,8 @@ const page = () => {
     setLoading(false);
   }
 
+  
+
   return (
     <ProtectedRoute>
       <div className="max-w-4xl mx-auto mt-6 p-8 bg-gray-100 rounded-xl shadow-lg font-sans sm:mt-60 xl:mt-6">

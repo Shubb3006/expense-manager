@@ -28,6 +28,16 @@ const Navbar = () => {
     setIsLogout(false);
   };
 
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Escape") setIsLogout(false);
+      if (e.key === "Enter") handleLogout();
+    };
+
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, []);
+
   return (
     <nav className="bg-gray-800 text-white shadow-md">
       {isLogout && (
