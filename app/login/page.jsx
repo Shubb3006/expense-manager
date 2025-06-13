@@ -43,7 +43,7 @@ const Page = () => {
         .select("*")
         .eq("email", email.toLowerCase());
 
-      if (existingUser.length>0) {
+      if (existingUser.length > 0) {
         setErr(true);
         setMessage("Email already registered. Please log in.");
         setLoading(false);
