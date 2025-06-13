@@ -13,6 +13,7 @@ const Page = () => {
   const [message, setMessage] = useState(null);
   const [err, setErr] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [passVisible, setPassVisible] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -79,6 +80,7 @@ const Page = () => {
         setEmail("");
         setName("");
         setPassword("");
+        setPassVisible(false);
 
         setErr(false);
         setMessage("Account created successfully! Please check your email.");
@@ -86,6 +88,18 @@ const Page = () => {
     }
     setLoading(false);
   }
+
+  const handleBlur = () => {
+    // Check if password contains both letters and numbers
+    const regex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+    if (password.length < 6) {
+      setErr("Password Length must be greater than or equal to 6.");
+    } else if (!regex.test(password) && password.length !== 0) {
+      setErr("Password must contain both letters and numbers.");
+    } else {
+      setErr("");
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
@@ -128,14 +142,33 @@ const Page = () => {
               Password
             </label>
             <input
-              type="password"
+              type={passVisible ? "text" : "password"}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                const noSpaces = e.target.value.replace(/\s/g, "");
+                setPassword(noSpaces);
+              }}
+              onBlur={handleBlur}
               className="mt-1 block w-full px-4 py-2 border rounded-md"
               required
             />
-            {!isLogin && <p>{password}</p>}
           </div>
+          <div className="flex items-center justify-center gap-2 mt-2">
+            <input
+              type="checkbox"
+              id="showPassword"
+              checked={passVisible}
+              onChange={() => setPassVisible(!passVisible)}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded hover:cursor-pointer"
+            />
+            <label htmlFor="showPassword" className="text-sm text-gray-700">
+              Show Password
+            </label>
+          </div>
+
+          {err && (
+            <p className="text-sm text-center text-red-600 mt-1">{err}</p>
+          )}
 
           <button
             type="submit"
