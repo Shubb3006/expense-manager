@@ -1,6 +1,6 @@
 "use client";
 import { supabase } from "@/lib/supabase";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const DeletingExpense = ({ id, setIsDeleting, fetchExpenses }) => {
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ const DeletingExpense = ({ id, setIsDeleting, fetchExpenses }) => {
     const handleKey = (e) => {
       if (e.key === "Escape") setIsDeleting(false);
       if (e.key === "Enter") {
-        handleDelete(id); // if `id` and `handleDelete` are accessible
+        handleDelete(id);
       }
     };
 
@@ -31,8 +31,8 @@ const DeletingExpense = ({ id, setIsDeleting, fetchExpenses }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 text-center space-y-5 animate-fadeIn">
-        <h2 className="text-xl font-semibold text-gray-800">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-sm w-full p-6 text-center space-y-5 animate-fadeIn text-gray-800 dark:text-white">
+        <h2 className="text-xl font-semibold">
           Are you sure you want to delete this expense?
         </h2>
 
@@ -50,7 +50,7 @@ const DeletingExpense = ({ id, setIsDeleting, fetchExpenses }) => {
           </button>
           <button
             onClick={() => setIsDeleting(false)}
-            className="px-5 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 transition hover:cursor-pointer"
+            className="px-5 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 transition hover:cursor-pointer"
           >
             Cancel
           </button>

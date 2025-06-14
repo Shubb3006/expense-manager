@@ -53,10 +53,10 @@ const page = () => {
 
   return (
     <ProtectedRoute>
-      <div className="max-w-4xl max-h-[80vh] md:max-h-[90vh] lg:max-h-[800px] mx-auto mt-5 p-4 md:p-6 font-sans md:max-w-7xl bg-gray-100 rounded-xl shadow-lg ">
+      <div className="max-w-4xl max-h-[80vh] md:max-h-[90vh] lg:max-h-[800px] mx-auto mt-5 p-4 md:p-6 font-sans md:max-w-7xl bg-gray-100 dark:bg-gray-800 rounded-xl shadow-lg ">
         {loading ? (
           <div className="flex justify-center items-center h-[70vh]">
-            <div className="bg-white text-gray-600 text-lg px-6 py-4 rounded-lg shadow-md animate-pulse">
+            <div className="bg-white text-gray-600 text-lg px-6 py-4 rounded-lg shadow-md animate-pulse dar:text-white">
               Fetching Expenses...
             </div>
           </div>
@@ -72,7 +72,7 @@ const page = () => {
               </p>
             )}
 
-            <div className="grid max-h-[55vh] lg:max-h-[60vh] md:max-h-[80vh] gap-6 overflow-y-auto sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-1 sm:px-2">
+            <div className="grid max-h-[55vh] lg:max-h-[60vh] md:max-h-[80vh] gap-6 overflow-y-auto sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-1 sm:px-2 ">
               {Object.keys(groupedExpenses).map((month) => {
                 const total = groupedExpenses[month].reduce(
                   (sum, expense) => sum + expense.amount,
@@ -84,7 +84,7 @@ const page = () => {
               })}
             </div>
 
-            <div className="text-center bg-green-100 text-green-800 font-semibold py-3 rounded-md shadow-md mt-6">
+            <div className="text-center bg-green-100 dark:bg-green-500 text-green-800 dark:text-green-100 font-semibold py-3 rounded-md shadow-md mt-6">
               Total Expenses: ₹
               {expenses.reduce((acc, exp) => acc + exp.amount, 0)}
             </div>

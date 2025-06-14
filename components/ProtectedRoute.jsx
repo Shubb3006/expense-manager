@@ -15,7 +15,7 @@ export default function ProtectedRoute({ children }) {
 
   if (!user) {
     return (
-      <div className="h-screen flex items-center justify-center text-gray-600 text-lg">
+      <div className="h-screen flex items-center justify-center text-gray-600 text-lg dark:text-white">
         Checking authentication...
       </div>
     );

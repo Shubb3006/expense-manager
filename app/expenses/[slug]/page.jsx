@@ -9,15 +9,11 @@ import { useExpenseContext } from "@/context/ExpenseContext";
 import FilterBar from "@/components/FilterBar";
 import BudgetTracker from "@/components/BudgetTracker";
 
-const page = () => {
+const Page = () => {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const [actionloading, setActionLoading] = useState(false);
   const [isEditingnote, setIsEditingnote] = useState(null);
   const [isDeleting, setIsDeleting] = useState(null);
-
-  // const [categoryFilter, setCategoryFilter] = useState("");
-  // const [searchTerm, setSearchTerm] = useState("");
 
   const {
     categoryFilter,
@@ -28,31 +24,27 @@ const page = () => {
     sortOrderAmount,
   } = useExpenseContext();
 
-  // const [sortOrder, setSortOrder] = useState("");
-  // const [sortOrderAmount, setSortOrderAmount] = useState("");
-
-  const { slug } = useParams();
+  const params = useParams();
   useEffect(() => {
-    setMonthName(decodeURIComponent(slug));
-  }, [slug]);
-
-  // let monthname = decodeURIComponent(slug);
-  // const monthname = month.join(" ");
+    if (params?.slug) {
+      setMonthName(decodeURIComponent(params.slug));
+    }
+  }, [params]);
 
   function getMonthRange(monthString) {
-    // monthString = "June 2025"
     const [monthName, year] = monthString.split(" ");
     const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth();
 
-    const startDate = new Date(year, monthIndex, 1); // First day of the month
-    const endDate = new Date(year, monthIndex + 1, 1); // First day of next month
+    const startDate = new Date(year, monthIndex, 1);
+    const endDate = new Date(year, monthIndex + 1, 1);
 
     return {
-      startDate: startDate.toISOString(), // formatted for Supabase
+      startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
     };
   }
-  const { startDate, endDate } = monthname ? getMonthRange(monthname) : "";
+
+  const { startDate, endDate } = monthname ? getMonthRange(monthname) : {};
 
   async function fetchExpenses() {
     const { data, error } = await supabase
@@ -61,9 +53,11 @@ const page = () => {
       .gt("created_at", startDate)
       .lt("created_at", endDate)
       .order("created_at", { ascending: false });
+
     if (error) console.log(error.message);
     else setExpenses(data);
   }
+
   useEffect(() => {
     fetchExpenses().then(() => setLoading(false));
   }, [monthname]);
@@ -84,34 +78,29 @@ const page = () => {
   const totalAmount =
     filteredExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
 
-  //grouping with respectr of date
   const groupedByDate = filteredExpenses.reduce((acc, expense) => {
-    const date = expense.created_at.split("T")[0]; // e.g., "2025-06-04"
+    const date = expense.created_at.split("T")[0];
     if (!acc[date]) acc[date] = [];
     acc[date].push(expense);
     return acc;
   }, {});
-  let sortedDates;
 
+  let sortedDates;
   switch (sortOrder) {
-    case "newest": {
+    case "newest":
       sortedDates = Object.keys(groupedByDate).sort(
         (a, b) => new Date(b) - new Date(a)
       );
       break;
-    }
-    case "oldest": {
+    case "oldest":
       sortedDates = Object.keys(groupedByDate).sort(
         (a, b) => new Date(a) - new Date(b)
       );
       break;
-    }
-    default: {
+    default:
       sortedDates = Object.keys(groupedByDate).sort(
         (a, b) => new Date(b) - new Date(a)
       );
-      break;
-    }
   }
 
   return (
@@ -130,18 +119,19 @@ const page = () => {
           fetchExpenses={fetchExpenses}
         />
       )}
+
       {loading ? (
         <div className="flex justify-center items-center h-[50vh]">
-          <div className="text-lg text-gray-600 font-medium animate-pulse bg-white px-6 py-4 rounded-lg shadow">
+          <div className="text-lg text-gray-600 dark:text-gray-300 font-medium animate-pulse bg-white dark:bg-gray-800 px-6 py-4 rounded-lg shadow">
             Fetching Expenses... for this month
           </div>
         </div>
       ) : (
         <div
           key={monthname}
-          className="sm:mb-8  bg-gray-100 pb-5 pt-5 rounded-lg shadow lg:max-h-[90vh]"
+          className="sm:mb-8 bg-gray-100 dark:bg-gray-800 pb-5 pt-5 rounded-lg shadow"
         >
-          <h2 className="text-3xl font-extrabold text-center text-black-700 mb-6">
+          <h2 className="text-3xl font-extrabold text-center text-gray-900 dark:text-white mb-6">
             {monthname}
           </h2>
           <div className="space-y-6 px-2 sm:px-4 overflow-y-auto max-h-[61vh] sm:max-h-[60vh] md:max-h-[70vh] xl:max-h-[60vh]">
@@ -150,74 +140,64 @@ const page = () => {
 
             {sortedDates.map((date) => {
               if (sortOrderAmount === "high") {
-                groupedByDate[date].sort((a, b) => {
-                  return b.amount - a.amount;
-                });
+                groupedByDate[date].sort((a, b) => b.amount - a.amount);
               } else if (sortOrderAmount === "low") {
-                groupedByDate[date].sort((a, b) => {
-                  return a.amount - b.amount;
-                });
+                groupedByDate[date].sort((a, b) => a.amount - b.amount);
               }
 
               const totalAmountOfDay = groupedByDate[date].reduce(
-                (acc, expense) => {
-                  return acc + expense.amount;
-                },
+                (acc, expense) => acc + expense.amount,
                 0
               );
-              // console.log(sortedDates)
 
               return (
                 <div key={date}>
-                  <div className="text-lg font-semibold text-gray-700 mb-2">
+                  <div className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
                     {date}
                   </div>
-                  <div className="text-md font-bold text-green-600 mb-4">
+                  <div className="text-md font-bold text-green-600 dark:text-green-300 mb-4">
                     Total Spent: ₹{totalAmountOfDay}
                   </div>
                   <ul className="space-y-4">
-                    {/* {console.log(groupedByDate[date])} */}
-                    {groupedByDate[date].map((expense) => {
-                      return (
-                        <li
-                          key={expense.id}
-                          className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
-                        >
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-xl font-semibold text-gray-800 truncate">
-                                {expense.title}
-                              </p>
-                              <p className="text-sm text-gray-500 mt-1 truncate">
-                                {expense.note}
-                              </p>
-                              {expense.category && (
-                                <CategoryBadge category={expense.category} />
-                              )}
-                            </div>
-                            <div className="flex-shrink-0 flex gap-3 items-center">
-                              <button
-                                onClick={() => setIsEditingnote(expense)}
-                                className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => setIsDeleting(expense.id)}
-                                className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 hover:cursor-pointer bg-red-100 text-red-700 border-red-300 hover:bg-red-200"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                            <div className="text-right flex-shrink-0">
-                              <p className="text-lg font-bold text-rose-600">
-                                ₹{expense.amount}
-                              </p>
-                            </div>
+                    {groupedByDate[date].map((expense) => (
+                      <li
+                        key={expense.id}
+                        className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-600"
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xl font-semibold text-gray-800 dark:text-white truncate">
+                              {expense.title}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-300 mt-1 truncate">
+                              {expense.note}
+                            </p>
+                            {expense.category && (
+                              <CategoryBadge category={expense.category} />
+                            )}
                           </div>
-                        </li>
-                      );
-                    })}
+                          <div className="flex-shrink-0 flex gap-3 items-center">
+                            <button
+                              onClick={() => setIsEditingnote(expense)}
+                              className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-500 dark:hover:bg-blue-800 cursor-pointer"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => setIsDeleting(expense.id)}
+                              className="px-4 py-2 rounded-md text-sm font-medium border transition-all duration-200 bg-red-100 text-red-700 border-red-300 hover:bg-red-200 dark:bg-red-900 dark:text-red-300 dark:border-red-500 dark:hover:bg-red-800 cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                          <div className="text-right flex-shrink-0">
+                            <p className="text-lg font-bold text-rose-600 dark:text-rose-400">
+                              ₹{expense.amount}
+                            </p>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               );
@@ -225,7 +205,7 @@ const page = () => {
           </div>
 
           <div className="mt-5 text-center">
-            <div className="inline-block bg-green-100 text-green-800 font-semibold sm:text-lg text-sm px-6 py-3 rounded-xl shadow-md">
+            <div className="inline-block bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 font-semibold sm:text-lg text-sm px-6 py-3 rounded-xl shadow-md">
               Total Expenses {categoryFilter ? `for ${categoryFilter}` : ""} in{" "}
               {monthname}: ₹{totalAmount}
             </div>
@@ -236,4 +216,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

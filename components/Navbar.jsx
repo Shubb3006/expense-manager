@@ -12,6 +12,7 @@ const Navbar = () => {
   const [isLogout, setIsLogout] = useState(false);
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+
   useEffect(() => {
     console.log(user);
   }, []);
@@ -21,7 +22,6 @@ const Navbar = () => {
     if (error) {
       console.error("Error signing out:", error.message);
     } else {
-      // Optional: Redirect to login or homepage
       router.push("/login");
     }
 
@@ -34,7 +34,7 @@ const Navbar = () => {
       if (e.key === "Escape") setIsLogout(false);
       if (e.key === "Enter") {
         const active = document.activeElement;
-        const isInsideModal = active?.closest(".logout-modal"); // add a class to your modal
+        const isInsideModal = active?.closest(".logout-modal");
         if (isInsideModal) handleLogout();
       }
     };
@@ -44,24 +44,21 @@ const Navbar = () => {
   }, [isLogout]);
 
   return (
-    <nav className="bg-gray-800 text-white shadow-md">
+    <nav className="bg-gray-800 dark:bg-gray-900 text-white shadow-md">
       {isLogout && (
         <div className="fixed inset-0 z-50 backdrop-blur-sm bg-black/30 flex items-center justify-center">
-          <div className="relative bg-white rounded-xl shadow-xl  w-[75%] sm:w-full max-w-md p-6 animate-fadeIn text-black">
-            {/* Close Button (X) */}
+          <div className="logout-modal relative bg-white dark:bg-gray-800 rounded-xl shadow-xl w-[75%] sm:w-full max-w-md p-6 animate-fadeIn text-black dark:text-white">
             <button
               onClick={() => setIsLogout(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
             >
               <X className="w-5 h-5 cursor-pointer" />
             </button>
 
-            {/* Title */}
             <h2 className="text-xl font-semibold mb-6 text-center">
               Do you really want to log out?
             </h2>
 
-            {/* Action Buttons */}
             <div className="flex justify-center gap-6">
               <button
                 onClick={handleLogout}
@@ -71,7 +68,7 @@ const Navbar = () => {
               </button>
               <button
                 onClick={() => setIsLogout(false)}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition duration-150 cursor-pointer"
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 transition duration-150 cursor-pointer"
               >
                 Stay Signed In
               </button>
@@ -79,8 +76,8 @@ const Navbar = () => {
           </div>
         </div>
       )}
+
       <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between md:items-center">
-        {/* Logo and Toggle Button (always at top for mobile) */}
         <div className="flex justify-between items-center w-full md:w-auto">
           <h1 className="text-xl font-bold">Expense Tracker</h1>
           <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
@@ -92,7 +89,6 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Menu Links */}
         <div
           className={`${
             menuOpen ? "flex" : "hidden"
@@ -107,8 +103,7 @@ const Navbar = () => {
             Home
           </Link>
           <Link
-            // href={user ? "/expenses" : "/login"}
-            href={"/expenses"}
+            href="/expenses"
             className={
               pathName === "/expenses" || pathName.startsWith("/expenses")
                 ? `text-yellow-400`
@@ -139,14 +134,12 @@ const Navbar = () => {
               Login
             </Link>
           ) : (
-            <>
-              <a
-                onClick={() => setIsLogout(true)}
-                className="hover:text-red-400 hover:cursor-pointer"
-              >
-                Logout
-              </a>
-            </>
+            <a
+              onClick={() => setIsLogout(true)}
+              className="hover:text-red-400 hover:cursor-pointer"
+            >
+              Logout
+            </a>
           )}
         </div>
       </div>
