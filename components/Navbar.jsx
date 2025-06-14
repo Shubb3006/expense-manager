@@ -33,9 +33,10 @@ const Navbar = () => {
       if (!isLogout) return;
       if (e.key === "Escape") setIsLogout(false);
       if (e.key === "Enter") {
-        const active = document.activeElement;
-        const isInsideModal = active?.closest(".logout-modal");
-        if (isInsideModal) handleLogout();
+        // const active = document.activeElement;
+        // const isInsideModal = active?.closest(".logout-modal");
+        // if (isInsideModal) handleLogout();
+        handleLogout();
       }
     };
 
