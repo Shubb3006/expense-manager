@@ -26,7 +26,7 @@ const Home = () => {
   }, [user]);
 
   return (
-    <main className="flex flex-col items-center px-4 bg-gray-300 dark:bg-gray-700 min-h-[635px]">
+    <main className="flex flex-col items-center px-4 bg-gray-100 dark:bg-gray-700 min-h-[635px]">
       <div className="max-w-3xl text-center pt-30 md:pt-60 ">
         <h1 className="text-4xl font-bold mb-4 text-gray-800 dark:text-white">
           Welcome to SpendWise 🧾
