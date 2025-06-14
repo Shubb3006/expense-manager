@@ -25,7 +25,7 @@ const Page = () => {
     setLoading(true);
 
     if (isLogin) {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -39,7 +39,7 @@ const Page = () => {
         router.push("/");
       }
     } else {
-      const { data: existingUser, error: existingUserError } = await supabase
+      const { data: existingUser } = await supabase
         .from("profiles")
         .select("*")
         .eq("email", email.toLowerCase());
@@ -52,10 +52,7 @@ const Page = () => {
       }
 
       const { data: signUpData, error: signUpError } =
-        await supabase.auth.signUp({
-          email,
-          password,
-        });
+        await supabase.auth.signUp({ email, password });
 
       if (signUpError) {
         setErr(true);
@@ -63,19 +60,15 @@ const Page = () => {
         setLoading(false);
         return;
       }
+
       if (signUpData.user) {
-        const { data: insertedProfile, error: insertError } = await supabase
-          .from("profiles")
-          .insert([
-            {
-              id: signUpData.user.id,
-              display_name: name.toLowerCase(),
-              email: signUpData.user.email.toLowerCase(),
-            },
-          ])
-          .select();
-        console.log("Inserted profile:", insertedProfile);
-        console.log("Inserted error:", insertError);
+        await supabase.from("profiles").insert([
+          {
+            id: signUpData.user.id,
+            display_name: name.toLowerCase(),
+            email: signUpData.user.email.toLowerCase(),
+          },
+        ]);
 
         setEmail("");
         setName("");
@@ -90,7 +83,6 @@ const Page = () => {
   }
 
   const handleBlur = () => {
-    // Check if password contains both letters and numbers
     const regex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
     if (password.length < 6) {
       setErr("Password Length must be greater than or equal to 6.");
@@ -102,66 +94,64 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[600px] lg:min-h-screen bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white shadow-md   rounded-lg p-8 space-y-6">
-        <h1 className="text-2xl font-bold text-center text-gray-800">
+    <div className="flex flex-col items-center justify-center min-h-[600px] lg:min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-md rounded-lg p-8 space-y-6">
+        <h1 className="text-2xl font-bold text-center">
           {isLogin ? "Login to Your Account" : "Create a New Account"}
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                 Name
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full px-4 py-2 border rounded-md"
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-black dark:text-white"
                 required
               />
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Email
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full px-4 py-2 border rounded-md"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-black dark:text-white"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Password
             </label>
             <input
               type={passVisible ? "text" : "password"}
               value={password}
-              onChange={(e) => {
-                const noSpaces = e.target.value.replace(/\s/g, "");
-                setPassword(noSpaces);
-              }}
+              onChange={(e) => setPassword(e.target.value.replace(/\s/g, ""))}
               onBlur={handleBlur}
-              className="mt-1 block w-full px-4 py-2 border rounded-md"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-black dark:text-white"
               required
             />
           </div>
+
           <div className="flex items-center justify-center gap-2 mt-2">
             <input
               type="checkbox"
               id="showPassword"
               checked={passVisible}
               onChange={() => setPassVisible(!passVisible)}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded hover:cursor-pointer"
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <label htmlFor="showPassword" className="text-sm text-gray-700">
+            <label htmlFor="showPassword" className="text-sm text-gray-700 dark:text-gray-300">
               Show Password
             </label>
           </div>
@@ -173,14 +163,14 @@ const Page = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:hover:cursor-pointer"
+            className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md transition disabled:bg-gray-400"
           >
             {isLogin
               ? loading
-                ? "Logging...."
+                ? "Logging in..."
                 : "Login"
               : loading
-              ? "Signing Up...."
+              ? "Signing up..."
               : "Sign Up"}
           </button>
         </form>
