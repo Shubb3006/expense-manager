@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 💸 Expense Tracker App
 
-## Getting Started
+A modern, full-stack **Expense Tracker** built with **Next.js**, **TypeScript**, **Tailwind CSS**, and **Supabase** for authentication and data storage. The app allows users to sign up, log in, manage their expenses, and track their spending in a user-friendly dashboard — fully responsive and optimized for dark mode.
 
-First, run the development server:
+## 🔗 Live Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+👉 [Check it Live](https://expense-manager-virid-nine.vercel.app/)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## ✨ Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- ✅ User authentication (Sign Up / Log In / Log Out) using Supabase
+- ✅ Protected routes with session handling
+- ✅ Add, edit, and delete expenses
+- ✅ Dark mode compatible UI
+- ✅ Responsive design for mobile and desktop
+- ✅ Clean and modern UI using Tailwind CSS
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Frontend     | Backend   | Auth        | Styling      | Hosting     |
+|--------------|-----------|-------------|--------------|-------------|
+| Next.js 14   | Supabase  | Supabase    | Tailwind CSS | Vercel      |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🔐 Authentication Flow
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Email/password-based authentication with Supabase.
+- Custom login/signup UI with validation.
+- Stores additional user profile data in a `profiles` table.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📁 Folder Structure
+
+app/
+├── page.jsx # Home Page
+├── login/page.jsx # Login/Signup Page
+├── expenses/ # List, Add Expenses
+├── layout.jsx # Layout wrapper
+components/
+├── Navbar.jsx # Top navigation bar
+context/
+├── Authcontext.tsx # Supabase auth context
+lib/
+├── supabase.ts # Supabase client setup
+public/
+styles/
+
+---
