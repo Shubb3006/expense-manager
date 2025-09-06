@@ -31,7 +31,6 @@ const page = () => {
   }, []);
 
   function groupByMonth(expenses) {
-    console.log("Rendering");
     const grouped = {};
     expenses.forEach((expense) => {
       const date = new Date(expense.created_at);
@@ -48,8 +47,8 @@ const page = () => {
   // const groupedExpenses = groupByMonth(expenses);
   const groupedExpenses = useMemo(() => groupByMonth(expenses), [expenses]);
 
-
-  
+  const totalExpense = expenses.reduce((acc, exp) => acc + exp.amount, 0);
+  let month_num=0;
 
   return (
     <ProtectedRoute>
@@ -74,6 +73,7 @@ const page = () => {
 
             <div className="grid max-h-[55vh] lg:max-h-[60vh] md:max-h-[80vh] gap-6 overflow-y-auto sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-1 sm:px-2 ">
               {Object.keys(groupedExpenses).map((month) => {
+                month_num++;
                 const total = groupedExpenses[month].reduce(
                   (sum, expense) => sum + expense.amount,
                   0
@@ -85,8 +85,10 @@ const page = () => {
             </div>
 
             <div className="text-center bg-green-100 dark:bg-green-500 text-green-800 dark:text-green-100 font-semibold py-3 rounded-md shadow-md mt-6">
-              Total Expenses: ₹
-              {expenses.reduce((acc, exp) => acc + exp.amount, 0)}
+              Total Expenses: ₹{totalExpense}
+            </div>
+            <div className="text-center bg-green-100 dark:bg-green-500 text-green-800 dark:text-green-100 font-semibold py-3 rounded-md shadow-md mt-6">
+              Average Monthly Expenses: ₹{totalExpense/month_num}
             </div>
           </>
         )}
