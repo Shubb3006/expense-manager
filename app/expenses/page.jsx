@@ -48,7 +48,7 @@ const page = () => {
   const groupedExpenses = useMemo(() => groupByMonth(expenses), [expenses]);
 
   const totalExpense = expenses.reduce((acc, exp) => acc + exp.amount, 0);
-  let month_num=0;
+  let month_num = 0;
 
   return (
     <ProtectedRoute>
@@ -88,7 +88,8 @@ const page = () => {
               Total Expenses: ₹{totalExpense}
             </div>
             <div className="text-center bg-green-100 dark:bg-green-500 text-green-800 dark:text-green-100 font-semibold py-3 rounded-md shadow-md mt-2">
-              Average Monthly Expenses: ₹{totalExpense/month_num}
+              Average Monthly Expenses: ₹{(totalExpense / month_num).toFixed(2)}
+              ;
             </div>
           </>
         )}
