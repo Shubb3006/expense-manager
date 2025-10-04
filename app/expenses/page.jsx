@@ -85,11 +85,10 @@ const page = () => {
             </div>
 
             <div className="text-center bg-green-100 dark:bg-green-500 text-green-800 dark:text-green-100 font-semibold py-3 rounded-md shadow-md mt-6">
-              Total Expenses: ₹{totalExpense}
+              Total Expenses: ₹{totalExpense.toLocaleString('en-IN')}
             </div>
             <div className="text-center bg-green-100 dark:bg-green-500 text-green-800 dark:text-green-100 font-semibold py-3 rounded-md shadow-md mt-2">
-              Average Monthly Expenses: ₹{(totalExpense / month_num).toFixed(2)}
-              ;
+              Average Monthly Expenses: ₹{(totalExpense / month_num).toLocaleString('en-IN')}
             </div>
           </>
         )}
